@@ -13,13 +13,14 @@ $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'patients';
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 
+// error_log($_GET['controller'],3, "file.log");m
 switch ($controllerName) {
     case 'patients':
         $controller = new \Controllers\PatientController($db);
         break;
 
     case 'departments':
-        $controller = new \Controllers\DepartmentsController($db);
+        $controller = new \Controllers\DepartmentController($db);
         break;
 
     case 'doctors':
@@ -48,15 +49,6 @@ switch ($action) {
     case 'delete':
         if ($id) {
             $controller->delete($id);
-        } else {
-            header("Location: index.php?controller=$controllerName");
-            exit;
-        }
-        break;
-
-    case 'view':
-        if ($id) {
-            $controller->view($id);
         } else {
             header("Location: index.php?controller=$controllerName");
             exit;

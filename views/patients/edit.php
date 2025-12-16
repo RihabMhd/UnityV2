@@ -68,13 +68,11 @@
 </div>
 
 <style>
-    /* Input focus styles for dark mode */
     input:focus, select:focus {
         outline: none;
         border-color: #9EE493 !important;
     }
     
-    /* Date picker dark mode fix */
     input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(1);
     }
