@@ -109,7 +109,7 @@ class PatientController
         if ($patient->deletePatient()) {
             header("LOCATION: index.php?controller=patients&success=1");
         } else {
-            header("LOCATION: index.php?error=delete_failed");
+            header("LOCATION: index.php?controller=patients&error=delete_failed");
         }
         exit;
     }

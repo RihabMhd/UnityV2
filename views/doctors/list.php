@@ -52,7 +52,7 @@
                                 </a>
                                 <a href="index.php?controller=doctors&action=delete&id=<?php echo $row['doctor_id']; ?>"
                                     style="padding: 5px 10px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
-                                    onclick="return confirm('Are you sure you want to delete this patient?')">
+                                    onclick="return confirm('Are you sure you want to delete this doctor?')">
                                     <i class="fa-solid fa-user-xmark"></i>
                                 </a>
                             </td>
