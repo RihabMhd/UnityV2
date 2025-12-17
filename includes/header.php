@@ -19,9 +19,9 @@
 
 <body>
     <?php
-    $currentController = isset($_GET['controller']) ? $_GET['controller'] : 'patients';
+    $currentController = isset($_GET['controller']) ? $_GET['controller'] : 'dashboard';
     ?>
-
+    
     <div class="sidebar">
         <div class="sidebar-header">
             <h1><i class="fa-solid fa-house-medical-flag"></i>&nbsp;Unity Care</h1>
@@ -30,7 +30,7 @@
         <div class="sidebar-menu">
             <div class="menu-section">
                 <div class="menu-section-title">Main</div>
-                <a href="index.php" class="icon-dashboard <?php echo (!isset($_GET['controller']) && !isset($_GET['action'])) ? 'active' : ''; ?>">
+                <a href="index.php?controller=dashboard" class="icon-dashboard <?php echo ($currentController == 'dashboard') ? 'active' : ''; ?>">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Dashboard</span>
                 </a>

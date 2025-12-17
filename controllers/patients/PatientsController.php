@@ -65,7 +65,7 @@ class PatientController
             $patient->email = $email;
 
             if ($patient->createPatient()) {
-                header("LOCATION: index.php");
+                header("LOCATION: index.php?controller=patients&success=1");
                 exit;
             } else {
                 $error = "Failed to create patient";
@@ -90,7 +90,7 @@ class PatientController
             $patient->email = trim($_POST['email']);
 
             if ($patient->updatePatient()) {
-                header("LOCATION: index.php");
+                header("LOCATION: index.php?controller=patients&success=1");
                 exit;
             } else {
                 $error = "Failed to update patient";
@@ -107,7 +107,7 @@ class PatientController
         $patient->patient_id = $id;
 
         if ($patient->deletePatient()) {
-            header("LOCATION: index.php");
+            header("LOCATION: index.php?controller=patients&success=1");
         } else {
             header("LOCATION: index.php?error=delete_failed");
         }

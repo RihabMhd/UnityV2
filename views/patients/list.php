@@ -46,11 +46,11 @@
                             <td><?php echo htmlspecialchars($row['phone_number']); ?></td>
                             <td><?php echo htmlspecialchars($row['email']); ?></td>
                             <td>
-                                <a href="index.php?action=edit&id=<?php echo $row['patient_id']; ?>"
+                                <a href="index.php?controller=patients&action=edit&id=<?php echo $row['patient_id']; ?>"
                                     style="padding: 5px 10px; background-color: #86BBD8; color: #2F4858; text-decoration: none; border-radius: 3px; margin-right: 5px; font-size: 12px; font-weight: bold;">
                                     <i class="fa-solid fa-user-pen"></i>
                                 </a>
-                                <a href="index.php?action=delete&id=<?php echo $row['patient_id']; ?>"
+                                <a href="index.php?controller=patients&action=delete&id=<?php echo $row['patient_id']; ?>"
                                     style="padding: 5px 10px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
                                     onclick="return confirm('Are you sure you want to delete this patient?')">
                                     <i class="fa-solid fa-user-xmark"></i>
