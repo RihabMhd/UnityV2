@@ -130,6 +130,35 @@ body {
 }
 
 
+.language-switcher {
+    display: flex;
+    gap: 5px;
+    background: #2F4858;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.language-switcher a {
+    padding: 6px 12px;
+    text-decoration: none;
+    color: #DAF7DC;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+
+
+.language-switcher a:hover {
+    background: #86BBD8;
+    color: #2F4858;
+}
+
+.language-switcher a.active {
+    background: #9EE493;
+    color: #2F4858;
+}
 
 @media (max-width: 768px) {
     .sidebar {
@@ -153,5 +182,3 @@ body {
         margin-left: 70px;
     }
 }
-
-
