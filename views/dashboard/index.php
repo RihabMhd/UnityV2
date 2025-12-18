@@ -1,18 +1,19 @@
-<?php include("./includes/header.php"); ?>
+<?php include("./includes/header.php");
+?>
 
 <div class="container" style="margin-top: 20px;">
-    
+
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-        
+
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: white; position: relative; overflow: hidden;">
             <div style="position: absolute; right: -10px; top: -10px; font-size: 100px; opacity: 0.1;">
                 <i class="fa-solid fa-hospital-user"></i>
             </div>
             <div style="position: relative; z-index: 1;">
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Total Patients</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;"><?php echo __('Total Patients'); ?></div>
                 <div style="font-size: 36px; font-weight: bold; margin-bottom: 10px;"><?php echo number_format($stats['total_patients']); ?></div>
                 <div style="font-size: 12px; opacity: 0.8;">
-                    <i class="fa-solid fa-arrow-up"></i> <?php echo $stats['new_patients_month']; ?> new this month
+                    <i class="fa-solid fa-arrow-up"></i> <?php echo $stats['new_patients_month']; ?> <?php echo __('new this month'); ?>
                 </div>
             </div>
         </div>
@@ -22,10 +23,10 @@
                 <i class="fa-solid fa-user-doctor"></i>
             </div>
             <div style="position: relative; z-index: 1;">
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Total Doctors</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;"><?php echo __('Total Doctors'); ?></div>
                 <div style="font-size: 36px; font-weight: bold; margin-bottom: 10px;"><?php echo number_format($stats['total_doctors']); ?></div>
                 <div style="font-size: 12px; opacity: 0.8;">
-                    <i class="fa-solid fa-stethoscope"></i> Active medical staff
+                    <i class="fa-solid fa-stethoscope"></i> <?php echo __('Active medical staff'); ?>
                 </div>
             </div>
         </div>
@@ -35,10 +36,10 @@
                 <i class="fa-solid fa-hospital"></i>
             </div>
             <div style="position: relative; z-index: 1;">
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Total Departments</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;"><?php echo __('Total Departments'); ?></div>
                 <div style="font-size: 36px; font-weight: bold; margin-bottom: 10px;"><?php echo number_format($stats['total_departments']); ?></div>
                 <div style="font-size: 12px; opacity: 0.8;">
-                    <i class="fa-solid fa-building"></i> Active departments
+                    <i class="fa-solid fa-building"></i> <?php echo __('Active departments'); ?>
                 </div>
             </div>
         </div>
@@ -46,17 +47,17 @@
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-        
+
         <div style="background: #336699; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             <h3 style="color: #DAF7DC; margin-bottom: 20px;">
-                <i class="fa-solid fa-chart-pie"></i> Doctors by Department
+                <i class="fa-solid fa-chart-pie"></i> <?php echo __('Doctors by Department'); ?>
             </h3>
             <canvas id="doctorsByDeptChart" style="max-height: 300px;"></canvas>
         </div>
 
         <div style="background: #336699; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             <h3 style="color: #DAF7DC; margin-bottom: 20px;">
-                <i class="fa-solid fa-clock"></i> Recent Patients
+                <i class="fa-solid fa-clock"></i> <?php echo __('Recent Patients'); ?>
             </h3>
             <div style="max-height: 300px; overflow-y: auto;">
                 <?php if ($recentPatients && $recentPatients->num_rows > 0): ?>
@@ -68,24 +69,24 @@
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <div style="color: #86BBD8; text-align: center; padding: 20px;">No recent patients</div>
+                    <div style="color: #86BBD8; text-align: center; padding: 20px;"><?php echo __('No recent patients'); ?></div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 30px;">
-        
+
         <div style="background: #336699; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             <h3 style="color: #DAF7DC; margin-bottom: 20px;">
-                <i class="fa-solid fa-chart-pie"></i> Patients by Gender
+                <i class="fa-solid fa-chart-pie"></i> <?php echo __('Patients by Gender'); ?>
             </h3>
             <canvas id="patientsByGenderChart" style="max-height: 300px;"></canvas>
         </div>
 
         <div style="background: #336699; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             <h3 style="color: #DAF7DC; margin-bottom: 20px;">
-                <i class="fa-solid fa-chart-pie"></i> Patients by Doctor
+                <i class="fa-solid fa-chart-pie"></i> <?php echo __('Patients by Doctor'); ?>
             </h3>
             <canvas id="patientsByDoctorChart" style="max-height: 300px;"></canvas>
         </div>
@@ -98,19 +99,19 @@
 <script>
     $(document).ready(function() {
         const ctx1 = document.getElementById('doctorsByDeptChart').getContext('2d');
-        
+
         <?php
         $labels1 = [];
         $data1 = [];
         $colors = ['#667eea', '#f5576c', '#4facfe', '#43e97b', '#f093fb', '#ffa726', '#66bb6a'];
-        
-        mysqli_data_seek($doctorsByDepartment, 0); 
+
+        mysqli_data_seek($doctorsByDepartment, 0);
         while ($row = $doctorsByDepartment->fetch_assoc()) {
             $labels1[] = $row['department_name'];
             $data1[] = $row['doctor_count'];
         }
         ?>
-        
+
         new Chart(ctx1, {
             type: 'doughnut',
             data: {
@@ -141,13 +142,19 @@
         });
 
         const ctx2 = document.getElementById('patientsByGenderChart').getContext('2d');
-        
         <?php
         $genderData = $patientsByGender->fetch_assoc();
-        $labels2 = ['Male', 'Female'];
-        $data2 = [$genderData['male_count'], $genderData['female_count']];
+        $labels2 = [
+            __('Male'),
+            __('Female')
+        ];
+        $data2 = [
+            $genderData['male_count'],
+            $genderData['female_count']
+        ];
         ?>
-        
+
+
         new Chart(ctx2, {
             type: 'pie',
             data: {
@@ -179,19 +186,19 @@
 
 
         const ctx3 = document.getElementById('patientsByDoctorChart').getContext('2d');
-        
+
         <?php
         $labels3 = [];
         $data3 = [];
         $colors = ['#667eea', '#f5576c', '#4facfe', '#43e97b', '#f093fb', '#ffa726', '#66bb6a'];
-        
-        mysqli_data_seek($patientsByDoctor, 0); 
+
+        mysqli_data_seek($patientsByDoctor, 0);
         while ($row = $patientsByDoctor->fetch_assoc()) {
             $labels3[] = $row['doctor_name'];
             $data3[] = $row['patient_count'];
         }
         ?>
-        
+
         new Chart(ctx3, {
             type: 'doughnut',
             data: {

@@ -25,7 +25,7 @@ class Doctor
     public function readAllDoctors()
     {
         $query = "SELECT d.*, dep.department_name, dep.location FROM " . $this->table_name .
-            " d inner join departments dep on dep.department_id=d.department_id";
+            " d left join departments dep on dep.department_id=d.department_id";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->get_result();
@@ -34,7 +34,7 @@ class Doctor
     public function readOneDoctors()
     {
         $query = "SELECT d.*, dep.department_name, dep.location FROM " . $this->table_name .
-            " d inner join departments dep on dep.department_id=d.department_id WHERE doctor_id = ?";
+            " d left join departments dep on dep.department_id=d.department_id WHERE doctor_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $this->doctor_id);
         $stmt->execute();
