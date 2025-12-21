@@ -7,6 +7,20 @@ return [
     'Main' => 'Main',
     'Dashboard' => 'Dashboard',
     
+    // Auth
+    'Login' => 'Login',
+    'Logout' => 'Logout',
+    'Welcome Back' => 'Welcome Back',
+    'Please login to your account' => 'Please login to your account',
+    'Username or Email' => 'Username or Email',
+    'Enter your username or email' => 'Enter your username or email',
+    'Password' => 'Password',
+    'Enter your password' => 'Enter your password',
+    'Please fill in all fields' => 'Please fill in all fields',
+    'Invalid username or password' => 'Invalid username or password',
+    'My Profile' => 'My Profile',
+    'Settings' => 'Settings',
+    
     // Dashboard Statistics
     'Total Patients' => 'Total Patients',
     'new this month' => 'new this month',
@@ -30,6 +44,7 @@ return [
     'Emergency' => 'Emergency',
     'Cancer Treatment' => 'Cancer Treatment',
     'General Surgery' => 'General Surgery',
+    'No Department' => 'No Department',
     
     // Gender
     'Male' => 'Male',
@@ -53,6 +68,13 @@ return [
     'Edit Doctor' => 'Edit Doctor',
     'Doctor not found' => 'Doctor not found',
     'Doctor Name' => 'Doctor Name',
+    'Cardiologist' => 'Cardiologist',
+    'General Surgeon' => 'General Surgeon',
+    'Radiologist' => 'Radiologist',
+    'Emergency Medicine' => 'Emergency Medicine',
+    'Orthopedic Surgeon' => 'Orthopedic Surgeon',
+    'Pediatrician' => 'Pediatrician',
+    'Neurologist' => 'Neurologist',
     
     // Departments Section
     'Departments' => 'Departments',

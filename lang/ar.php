@@ -7,6 +7,20 @@ return [
     'Main' => 'الرئيسية',
     'Dashboard' => 'لوحة التحكم',
 
+    // Auth
+    'Login' => 'تسجيل الدخول',
+    'Logout' => 'تسجيل الخروج',
+    'Welcome Back' => 'مرحباً بعودتك',
+    'Please login to your account' => 'يرجى تسجيل الدخول إلى حسابك',
+    'Username or Email' => 'اسم المستخدم أو البريد الإلكتروني',
+    'Enter your username or email' => 'أدخل اسم المستخدم أو البريد الإلكتروني',
+    'Password' => 'كلمة المرور',
+    'Enter your password' => 'أدخل كلمة المرور',
+    'Please fill in all fields' => 'يرجى ملء جميع الحقول',
+    'Invalid username or password' => 'اسم المستخدم أو كلمة المرور غير صحيحة',
+    'My Profile' => 'ملفي الشخصي',
+    'Settings' => 'الإعدادات',
+
     // Dashboard Statistics
     'Total Patients' => 'إجمالي المرضى',
     'new this month' => 'جديد هذا الشهر',
@@ -21,6 +35,8 @@ return [
     'Patients by Gender' => 'المرضى حسب الجنس',
     'Patients by Doctor' => 'المرضى حسب الطبيب',
     'No recent patients' => 'لا يوجد مرضى حديثون',
+    
+    // Departments
     'Cardiology' => 'طب القلب',
     'Cardiologist' => 'طبيب قلب',
     'General Surgeon' => 'جراح عام',
@@ -29,7 +45,6 @@ return [
     'Orthopedic Surgeon' => 'جراح عظام',
     'Pediatrician' => 'طبيب أطفال',
     'Neurologist' => 'طبيب أعصاب',
-    // Departments
     'Cardiologie' => 'أمراض القلب',
     'Neurology' => 'طب الأعصاب',
     'Pediatrics' => 'طب الأطفال',

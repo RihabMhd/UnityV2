@@ -7,6 +7,20 @@ return [
     'Main' => 'Principal',
     'Dashboard' => 'Tableau de Bord',
 
+    // Auth
+    'Login' => 'Connexion',
+    'Logout' => 'Déconnexion',
+    'Welcome Back' => 'Bienvenue',
+    'Please login to your account' => 'Veuillez vous connecter à votre compte',
+    'Username or Email' => 'Nom d\'utilisateur ou Email',
+    'Enter your username or email' => 'Entrez votre nom d\'utilisateur ou email',
+    'Password' => 'Mot de passe',
+    'Enter your password' => 'Entrez votre mot de passe',
+    'Please fill in all fields' => 'Veuillez remplir tous les champs',
+    'Invalid username or password' => 'Nom d\'utilisateur ou mot de passe invalide',
+    'My Profile' => 'Mon Profil',
+    'Settings' => 'Paramètres',
+
     // Dashboard Statistics
     'Total Patients' => 'Total des Patients',
     'new this month' => 'nouveau ce mois-ci',
@@ -30,6 +44,7 @@ return [
     'Emergency' => 'Urgences',
     'Cancer Treatment' => 'Traitement du Cancer',
     'General Surgery' => 'Chirurgie Générale',
+    'No Department' => 'Aucun Département',
 
     // Gender
     'Male' => 'Homme',
@@ -53,8 +68,6 @@ return [
     'Edit Doctor' => 'Modifier le Médecin',
     'Doctor not found' => 'Médecin non trouvé',
     'Doctor Name' => 'Nom du Médecin',
-
-    'Cardiology' => 'Cardiologie',
     'Cardiologist' => 'Cardiologue',
     'General Surgeon' => 'Chirurgien Général',
     'Radiologist' => 'Radiologue',
@@ -70,7 +83,6 @@ return [
     'Create Department' => 'Créer un Département',
     'Update Department' => 'Mettre à jour le Département',
     'Department not found' => 'Département non trouvé',
-    'No Department' => 'Aucun Département',
 
     // Table Headers
     'ID' => 'ID',

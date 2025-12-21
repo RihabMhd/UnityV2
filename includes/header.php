@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once __DIR__ . '/../config/lang.php';
 ?>
 <!DOCTYPE html>
@@ -17,19 +17,48 @@ require_once __DIR__ . '/../config/lang.php';
     <link rel="stylesheet" href="./assets/css/headStyle.css">
     <link rel="stylesheet" href="./assets/css/listStyle.css">
     <?php if (getCurrentLang() === 'ar'): ?>
-    <style>
-        body { font-family: 'Arial', 'Tahoma', sans-serif; }
-        .sidebar { right: 0; left: auto; }
-        .main-content { margin-right: 250px; margin-left: 0; }
-    </style>
+        <style>
+            body {
+                font-family: 'Arial', 'Tahoma', sans-serif;
+            }
+
+            .sidebar {
+                right: 0;
+                left: auto;
+            }
+
+            .main-content {
+                margin-right: 250px;
+                margin-left: 0;
+            }
+        </style>
     <?php endif; ?>
+    <style>
+        .logout-btn {
+            padding: 8px 15px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
 <body>
     <?php
     $currentController = isset($_GET['controller']) ? $_GET['controller'] : 'dashboard';
     ?>
-    
+
     <div class="sidebar">
         <div class="sidebar-header">
             <h1><i class="fa-solid fa-house-medical-flag"></i>&nbsp;<?php echo __('Unity Care'); ?></h1>
@@ -77,21 +106,26 @@ require_once __DIR__ . '/../config/lang.php';
             </h2>
             <div style="display: flex; align-items: center; gap: 15px;">
                 <div class="language-switcher">
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['lang' => 'en'])); ?>" 
-                       class="<?php echo getCurrentLang() === 'en' ? 'active' : ''; ?>" 
-                       title="English">EN</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['lang' => 'fr'])); ?>" 
-                       class="<?php echo getCurrentLang() === 'fr' ? 'active' : ''; ?>" 
-                       title="Français">FR</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['lang' => 'ar'])); ?>" 
-                       class="<?php echo getCurrentLang() === 'ar' ? 'active' : ''; ?>" 
-                       title="العربية">AR</a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['lang' => 'en'])); ?>"
+                        class="<?php echo getCurrentLang() === 'en' ? 'active' : ''; ?>"
+                        title="English">EN</a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['lang' => 'fr'])); ?>"
+                        class="<?php echo getCurrentLang() === 'fr' ? 'active' : ''; ?>"
+                        title="Français">FR</a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['lang' => 'ar'])); ?>"
+                        class="<?php echo getCurrentLang() === 'ar' ? 'active' : ''; ?>"
+                        title="العربية">AR</a>
                 </div>
-                
+
                 <div class="user-info">
-                    <div class="user-avatar">A</div>
-                    <span><?php echo __('Admin'); ?></span>
+                    <div class="user-avatar"><?php echo isset($_SESSION['username']) ? strtoupper(substr($_SESSION['username'], 0, 1)) : 'A'; ?></div>
+                    <span><?php echo isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_name']) : __('Admin'); ?></span>
                 </div>
+
+                <a href="index.php?controller=auth&action=logout" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span><?php echo __('Logout'); ?></span>
+                </a>
             </div>
         </div>
         <div class="content">
