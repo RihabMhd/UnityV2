@@ -1,18 +1,28 @@
 <?php
-class Database {
+
+class Database
+{
     private $host = "localhost";
     private $username = "root";
     private $password = "";
     private $dbname = "hospitalmanagement";
     public $conn;
 
-    public function connect() {
-        $this->conn = new mysqli($this->host, $this->username, $this->password, $this->dbname);
+    public function connect()
+    {
+        try {
+            $this->conn = new PDO(
+                "mysql:host={$this->host};dbname={$this->dbname};charset=utf8",
+                $this->username,
+                $this->password
+            );
 
-        if ($this->conn->connect_error) {
-            die("Erreur de connexion : " . $this->conn->connect_error);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            return $this->conn;
+
+        } catch (PDOException $e) {
+            die("Connection failed");
         }
-        $this->conn->set_charset("utf8mb4");
-        return $this->conn;
     }
 }

@@ -1,0 +1,17 @@
+{
+    "name": "user/unity-v2",
+    "autoload": {
+        "psr-4": {
+            "Repositories\\": "classes/repositories/",
+            "Interfaces\\": "classes/interfaces/",
+            "Models\\": "classes/models/"
+        }
+    },
+    "authors": [
+        {
+            "name": "RihabMhd",
+            "email": "rihabmahdi19@gmail.com"
+        }
+    ],
+    "require": {}
+}
