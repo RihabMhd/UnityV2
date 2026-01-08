@@ -12,10 +12,10 @@ class Doctor extends User
     private string $specialization;
     private string $phone_number;
     private ?int $department_id = null;
+    private ?string $department_name = null;
 
     public function __construct()
     {
-        parent::__construct();
         $this->role = self::ROLE_DOCTOR;
     }
 
@@ -48,6 +48,10 @@ class Doctor extends User
     {
         return $this->department_id;
     }
+    public function getDepartmentName(): ?string
+    {
+        return $this->department_name;
+    }
 
     public function setDoctorId(int $doctor_id): void
     {
@@ -63,6 +67,13 @@ class Doctor extends User
             throw new InvalidArgumentException("Le prénom est obligatoire.");
         }
         $this->first_name = trim($first_name);
+    }
+    public function setDepartmentName(string $department_name): void
+    {
+        if (empty(trim($department_name))) {
+            throw new InvalidArgumentException("La department est obligatoire.");
+        }
+        $this->department_name = trim($department_name);
     }
 
     public function setLastName(string $last_name): void

@@ -22,7 +22,7 @@ class PatientRepository implements PatientInterface
     {
         $query = "SELECT p.*, u.* 
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
                   WHERE p.patient_id = :id LIMIT 1";
         
         $stmt = $this->conn->prepare($query);
@@ -40,8 +40,8 @@ class PatientRepository implements PatientInterface
     {
         $query = "SELECT p.*, u.* 
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
-                  WHERE p.user_id = :userId LIMIT 1";
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
+                  WHERE p.patient_id = :userId LIMIT 1";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
@@ -58,7 +58,7 @@ class PatientRepository implements PatientInterface
     {
         $query = "SELECT p.*, u.* 
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
                   ORDER BY p.last_name, p.first_name";
         
         $stmt = $this->conn->prepare($query);
@@ -76,7 +76,7 @@ class PatientRepository implements PatientInterface
     {
         $query = "SELECT p.*, u.* 
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
                   WHERE p.doctor_id = :doctorId
                   ORDER BY p.last_name, p.first_name";
         
@@ -92,54 +92,32 @@ class PatientRepository implements PatientInterface
         return $patients;
     }
 
-    public function findByGender(string $gender): array
-    {
-        $query = "SELECT p.*, u.* 
-                  FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
-                  WHERE p.gender = :gender
-                  ORDER BY p.last_name, p.first_name";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':gender', $gender);
-        $stmt->execute();
-
-        $patients = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $patients[] = $this->mapToEntity($row);
-        }
-
-        return $patients;
-    }
-
+ 
     public function create(Patient $patient): bool
     {
+        // Check if doctor_id column exists in the table
         $query = "INSERT INTO " . $this->table_name . " 
-                  (user_id, first_name, last_name, gender, date_of_birth, phone_number, address, doctor_id) 
-                  VALUES (:user_id, :first_name, :last_name, :gender, :date_of_birth, :phone_number, :address, :doctor_id)";
+                  (patient_id, first_name, last_name, date_of_birth, phone_number, address) 
+                  VALUES (:patient_id, :first_name, :last_name, :date_of_birth, :phone_number, :address)";
 
         $stmt = $this->conn->prepare($query);
 
-        $userId = $patient->getId();
+        $patientId = $patient->getId(); // patient_id = user_id
         $firstName = $patient->getFirstName();
         $lastName = $patient->getLastName();
-        $gender = $patient->getGender();
         $dateOfBirth = $patient->getDateOfBirth();
         $phoneNumber = $patient->getPhoneNumber();
         $address = $patient->getAddress();
-        $doctorId = $patient->getDoctorId();
 
-        $stmt->bindParam(':user_id', $userId);
+        $stmt->bindParam(':patient_id', $patientId);
         $stmt->bindParam(':first_name', $firstName);
         $stmt->bindParam(':last_name', $lastName);
-        $stmt->bindParam(':gender', $gender);
         $stmt->bindParam(':date_of_birth', $dateOfBirth);
         $stmt->bindParam(':phone_number', $phoneNumber);
         $stmt->bindParam(':address', $address);
-        $stmt->bindParam(':doctor_id', $doctorId);
 
         if ($stmt->execute()) {
-            $patient->setPatientId((int)$this->conn->lastInsertId());
+            $patient->setPatientId($patientId);
             return true;
         }
 
@@ -151,11 +129,9 @@ class PatientRepository implements PatientInterface
         $query = "UPDATE " . $this->table_name . " 
                   SET first_name = :first_name, 
                       last_name = :last_name, 
-                      gender = :gender, 
                       date_of_birth = :date_of_birth, 
                       phone_number = :phone_number, 
-                      address = :address, 
-                      doctor_id = :doctor_id 
+                      address = :address
                   WHERE patient_id = :patient_id";
 
         $stmt = $this->conn->prepare($query);
@@ -163,20 +139,16 @@ class PatientRepository implements PatientInterface
         $patientId = $patient->getPatientId();
         $firstName = $patient->getFirstName();
         $lastName = $patient->getLastName();
-        $gender = $patient->getGender();
         $dateOfBirth = $patient->getDateOfBirth();
         $phoneNumber = $patient->getPhoneNumber();
         $address = $patient->getAddress();
-        $doctorId = $patient->getDoctorId();
 
         $stmt->bindParam(':patient_id', $patientId);
         $stmt->bindParam(':first_name', $firstName);
         $stmt->bindParam(':last_name', $lastName);
-        $stmt->bindParam(':gender', $gender);
         $stmt->bindParam(':date_of_birth', $dateOfBirth);
         $stmt->bindParam(':phone_number', $phoneNumber);
         $stmt->bindParam(':address', $address);
-        $stmt->bindParam(':doctor_id', $doctorId);
 
         return $stmt->execute();
     }
@@ -196,7 +168,7 @@ class PatientRepository implements PatientInterface
                          CONCAT(d.first_name, ' ', d.last_name) as doctor_name,
                          d.specialization as doctor_specialization
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
                   LEFT JOIN doctors d ON p.doctor_id = d.doctor_id
                   WHERE p.patient_id = :patientId LIMIT 1";
         
@@ -211,7 +183,7 @@ class PatientRepository implements PatientInterface
     {
         $query = "SELECT p.*, u.* 
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
                   WHERE CONCAT(p.first_name, ' ', p.last_name) LIKE :name
                   ORDER BY p.last_name, p.first_name";
         
@@ -235,7 +207,7 @@ class PatientRepository implements PatientInterface
 
         $query = "SELECT p.*, u.* 
                   FROM " . $this->table_name . " p
-                  INNER JOIN " . $this->users_table . " u ON p.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON p.patient_id = u.id
                   WHERE p.date_of_birth BETWEEN :minDate AND :maxDate
                   ORDER BY p.date_of_birth DESC";
         
@@ -254,7 +226,7 @@ class PatientRepository implements PatientInterface
 
     private function mapToEntity(array $row): Patient
     {
-        $patient = new Patient($this->conn);
+        $patient = new Patient();
         
         // User fields
         if (isset($row['id'])) {
@@ -277,7 +249,6 @@ class PatientRepository implements PatientInterface
         $patient->setPatientId((int)$row['patient_id']);
         $patient->setFirstName($row['first_name']);
         $patient->setLastName($row['last_name']);
-        $patient->setGender($row['gender']);
         $patient->setDateOfBirth($row['date_of_birth']);
         $patient->setPhoneNumber($row['phone_number']);
         $patient->setAddress($row['address']);

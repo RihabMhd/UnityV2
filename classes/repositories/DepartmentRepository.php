@@ -77,15 +77,21 @@ class DepartmentRepository implements DepartmentInterface
     public function create(Department $department): bool
     {
         $query = "INSERT INTO " . $this->table_name . " 
-                  (department_name, location) 
-                  VALUES (:department_name, :location)";
+                  (department_name, description, contact_number, email, location) 
+                  VALUES (:department_name, :description, :contact_number, :email, :location)";
 
         $stmt = $this->conn->prepare($query);
 
         $departmentName = $department->getDepartmentName();
+        $description = $department->getDescription();
+        $contactNumber = $department->getContactNumber();
+        $email = $department->getEmail();
         $location = $department->getLocation();
 
         $stmt->bindParam(':department_name', $departmentName);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':contact_number', $contactNumber);
+        $stmt->bindParam(':email', $email);
         $stmt->bindParam(':location', $location);
 
         if ($stmt->execute()) {
@@ -99,7 +105,10 @@ class DepartmentRepository implements DepartmentInterface
     public function update(Department $department): bool
     {
         $query = "UPDATE " . $this->table_name . " 
-                  SET department_name = :department_name, 
+                  SET department_name = :department_name,
+                      description = :description,
+                      contact_number = :contact_number,
+                      email = :email,
                       location = :location 
                   WHERE department_id = :department_id";
 
@@ -107,10 +116,16 @@ class DepartmentRepository implements DepartmentInterface
 
         $departmentId = $department->getDepartmentId();
         $departmentName = $department->getDepartmentName();
+        $description = $department->getDescription();
+        $contactNumber = $department->getContactNumber();
+        $email = $department->getEmail();
         $location = $department->getLocation();
 
         $stmt->bindParam(':department_id', $departmentId);
         $stmt->bindParam(':department_name', $departmentName);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':contact_number', $contactNumber);
+        $stmt->bindParam(':email', $email);
         $stmt->bindParam(':location', $location);
 
         return $stmt->execute();
@@ -161,9 +176,12 @@ class DepartmentRepository implements DepartmentInterface
 
     private function mapToEntity(array $row): Department
     {
-        $department = new Department($this->conn);
+        $department = new Department();
         $department->setDepartmentId((int)$row['department_id']);
         $department->setDepartmentName($row['department_name']);
+        $department->setDescription($row['description'] ?? null);
+        $department->setContactNumber($row['contact_number'] ?? null);
+        $department->setEmail($row['email'] ?? null);
         $department->setLocation($row['location']);
 
         return $department;

@@ -8,6 +8,9 @@ class Department
 {
     private ?int $department_id = null;
     private string $department_name;
+    private ?string $description = null;
+    private ?string $contact_number = null;
+    private ?string $email = null;
     private string $location;
 
     public function getDepartmentId(): ?int
@@ -18,6 +21,21 @@ class Department
     public function getDepartmentName(): string
     {
         return $this->department_name;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getContactNumber(): ?string
+    {
+        return $this->contact_number;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
     }
 
     public function getLocation(): string
@@ -39,6 +57,21 @@ class Department
             throw new InvalidArgumentException("Le nom du département est obligatoire.");
         }
         $this->department_name = trim($department_name);
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description ? trim($description) : null;
+    }
+
+    public function setContactNumber(?string $contact_number): void
+    {
+        $this->contact_number = $contact_number ? trim($contact_number) : null;
+    }
+
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email ? trim($email) : null;
     }
 
     public function setLocation(string $location): void

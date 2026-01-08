@@ -81,16 +81,32 @@ class MedicationRepository implements MedicationInterface
     public function create(Medication $medication): bool
     {
         $query = "INSERT INTO " . $this->table_name . " 
-                  (medication_name, dosage) 
-                  VALUES (:medication_name, :dosage)";
+                  (medication_name, dosage, code, category, manufacturer, 
+                   stock_quantity, unit_price, expiry_date, status) 
+                  VALUES (:medication_name, :dosage, :code, :category, :manufacturer, 
+                          :stock_quantity, :unit_price, :expiry_date, :status)";
 
         $stmt = $this->conn->prepare($query);
 
         $medicationName = $medication->getMedicationName();
         $dosage = $medication->getDosage();
+        $code = $medication->getCode();
+        $category = $medication->getCategory();
+        $manufacturer = $medication->getManufacturer();
+        $stockQuantity = $medication->getStockQuantity();
+        $unitPrice = $medication->getUnitPrice();
+        $expiryDate = $medication->getExpiryDate();
+        $status = $medication->getStatus();
 
         $stmt->bindParam(':medication_name', $medicationName);
         $stmt->bindParam(':dosage', $dosage);
+        $stmt->bindParam(':code', $code);
+        $stmt->bindParam(':category', $category);
+        $stmt->bindParam(':manufacturer', $manufacturer);
+        $stmt->bindParam(':stock_quantity', $stockQuantity);
+        $stmt->bindParam(':unit_price', $unitPrice);
+        $stmt->bindParam(':expiry_date', $expiryDate);
+        $stmt->bindParam(':status', $status);
 
         if ($stmt->execute()) {
             $medication->setMedicationId((int)$this->conn->lastInsertId());
@@ -104,7 +120,14 @@ class MedicationRepository implements MedicationInterface
     {
         $query = "UPDATE " . $this->table_name . " 
                   SET medication_name = :medication_name, 
-                      dosage = :dosage 
+                      dosage = :dosage,
+                      code = :code,
+                      category = :category,
+                      manufacturer = :manufacturer,
+                      stock_quantity = :stock_quantity,
+                      unit_price = :unit_price,
+                      expiry_date = :expiry_date,
+                      status = :status
                   WHERE medication_id = :medication_id";
 
         $stmt = $this->conn->prepare($query);
@@ -112,10 +135,24 @@ class MedicationRepository implements MedicationInterface
         $medicationId = $medication->getMedicationId();
         $medicationName = $medication->getMedicationName();
         $dosage = $medication->getDosage();
+        $code = $medication->getCode();
+        $category = $medication->getCategory();
+        $manufacturer = $medication->getManufacturer();
+        $stockQuantity = $medication->getStockQuantity();
+        $unitPrice = $medication->getUnitPrice();
+        $expiryDate = $medication->getExpiryDate();
+        $status = $medication->getStatus();
 
         $stmt->bindParam(':medication_id', $medicationId);
         $stmt->bindParam(':medication_name', $medicationName);
         $stmt->bindParam(':dosage', $dosage);
+        $stmt->bindParam(':code', $code);
+        $stmt->bindParam(':category', $category);
+        $stmt->bindParam(':manufacturer', $manufacturer);
+        $stmt->bindParam(':stock_quantity', $stockQuantity);
+        $stmt->bindParam(':unit_price', $unitPrice);
+        $stmt->bindParam(':expiry_date', $expiryDate);
+        $stmt->bindParam(':status', $status);
 
         return $stmt->execute();
     }
@@ -162,12 +199,73 @@ class MedicationRepository implements MedicationInterface
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function findByCategory(string $category): array
+    {
+        $query = "SELECT * FROM " . $this->table_name . " 
+                  WHERE category = :category 
+                  ORDER BY medication_name";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':category', $category);
+        $stmt->execute();
+
+        $medications = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $medications[] = $this->mapToEntity($row);
+        }
+
+        return $medications;
+    }
+
+    public function findByStatus(string $status): array
+    {
+        $query = "SELECT * FROM " . $this->table_name . " 
+                  WHERE status = :status 
+                  ORDER BY medication_name";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':status', $status);
+        $stmt->execute();
+
+        $medications = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $medications[] = $this->mapToEntity($row);
+        }
+
+        return $medications;
+    }
+
+    public function findLowStock(int $threshold = 200): array
+    {
+        $query = "SELECT * FROM " . $this->table_name . " 
+                  WHERE stock_quantity <= :threshold AND status != 'Out of Stock'
+                  ORDER BY stock_quantity ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':threshold', $threshold);
+        $stmt->execute();
+
+        $medications = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $medications[] = $this->mapToEntity($row);
+        }
+
+        return $medications;
+    }
+
     private function mapToEntity(array $row): Medication
     {
-        $medication = new Medication($this->conn);
+        $medication = new Medication();
         $medication->setMedicationId((int)$row['medication_id']);
         $medication->setMedicationName($row['medication_name']);
         $medication->setDosage($row['dosage']);
+        $medication->setCode($row['code']);
+        $medication->setCategory($row['category']);
+        $medication->setManufacturer($row['manufacturer']);
+        $medication->setStockQuantity((int)$row['stock_quantity']);
+        $medication->setUnitPrice((float)$row['unit_price']);
+        $medication->setExpiryDate($row['expiry_date']);
+        $medication->setStatus($row['status']);
 
         return $medication;
     }

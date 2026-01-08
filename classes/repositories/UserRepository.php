@@ -3,11 +3,10 @@
 namespace Repositories;
 
 use Models\User;
-use Interfaces\UserInterface;
 use PDO;
 use PDOException;
 
-class UserRepository implements UserInterface
+class UserRepository
 {
     private $conn;
     private string $table_name = "users";
@@ -75,7 +74,7 @@ class UserRepository implements UserInterface
 
     public function findByRole(string $role): array
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE role = :role ORDER BY created_at DESC";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE role = :role ORDER BY username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':role', $role);
         $stmt->execute();
@@ -91,8 +90,8 @@ class UserRepository implements UserInterface
     public function create(User $user): bool
     {
         $query = "INSERT INTO " . $this->table_name . " 
-                  (username, email, password, role, created_at) 
-                  VALUES (:username, :email, :password, :role, :created_at)";
+                  (username, email, password, role) 
+                  VALUES (:username, :email, :password, :role)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -100,13 +99,11 @@ class UserRepository implements UserInterface
         $email = $user->getEmail();
         $password = $user->getPassword();
         $role = $user->getRole();
-        $created_at = $user->getCreatedAt();
 
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $password);
         $stmt->bindParam(':role', $role);
-        $stmt->bindParam(':created_at', $created_at);
 
         if ($stmt->execute()) {
             $user->setId((int)$this->conn->lastInsertId());
@@ -149,6 +146,17 @@ class UserRepository implements UserInterface
         $stmt->bindParam(':id', $id);
 
         return $stmt->execute();
+    }
+
+    public function authenticate(string $username, string $password): ?User
+    {
+        $user = $this->findByUsername($username);
+        
+        if ($user && $user->verifyPassword($password)) {
+            return $user;
+        }
+
+        return null;
     }
 
     public function usernameExists(string $username, ?int $excludeId = null): bool

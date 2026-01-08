@@ -38,6 +38,39 @@ class Router {
         exit();
     }
     
+    // navigate to specific file in user's role folder
+    public function navigateTo($file) {
+        if (!$this->isAuthenticated()) {
+            $this->redirectToLogin();
+        }
+        
+        $role = $this->getRole();
+        $targetPath = $this->basePath . '/public/' . $role . '/' . ltrim($file, '/');
+        
+        header("Location: {$targetPath}");
+        exit();
+    }
+    
+    // New method: Navigate to specific file in any role folder (with permission check)
+    public function navigateToRole($role, $file) {
+        if (!$this->isAuthenticated()) {
+            $this->redirectToLogin();
+        }
+        
+        // Optional: Add role permission check here
+        // For example, only admins can navigate to other roles' pages
+        $currentRole = $this->getRole();
+        if ($currentRole !== 'admin' && $currentRole !== $role) {
+            // Redirect to their own dashboard if they don't have permission
+            $this->redirectToDashboard();
+        }
+        
+        $targetPath = $this->basePath . '/public/' . $role . '/' . ltrim($file, '/');
+        
+        header("Location: {$targetPath}");
+        exit();
+    }
+    
     public function requireRole($allowedRoles) {
         if (!$this->isAuthenticated()) {
             $this->redirectToLogin();
@@ -45,6 +78,10 @@ class Router {
         
         if (!is_array($allowedRoles)) {
             $allowedRoles = [$allowedRoles];
+        }
+        
+        if (!in_array($this->getRole(), $allowedRoles)) {
+            $this->redirectToDashboard();
         }
     }
     
@@ -61,8 +98,19 @@ class Router {
         return $this->basePath . '/public/assets/' . ltrim($path, '/');
     }
     
+    // Enhanced URL method - now accepts specific files
     public function url($role, $page = 'index.php') {
-        return $this->basePath . '/public/' . $role . '/' . $page;
+        return $this->basePath . '/public/' . $role . '/' . ltrim($page, '/');
+    }
+    
+    // Get current page URL
+    public function getCurrentUrl() {
+        return $_SERVER['REQUEST_URI'];
+    }
+    
+    // Check if current page matches
+    public function isCurrentPage($page) {
+        return basename($_SERVER['PHP_SELF']) === $page;
     }
 }
 

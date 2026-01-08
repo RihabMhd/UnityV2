@@ -4,7 +4,8 @@
         "psr-4": {
             "Repositories\\": "classes/repositories/",
             "Interfaces\\": "classes/interfaces/",
-            "Models\\": "classes/models/"
+            "Models\\": "classes/models/",
+            "Config\\": "config/"
         }
     },
     "authors": [

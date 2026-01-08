@@ -20,11 +20,12 @@ class DoctorRepository implements DoctorInterface
 
     public function findById(int $id): ?Doctor
     {
-        $query = "SELECT d.*, u.* 
-                  FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
-                  WHERE d.doctor_id = :id LIMIT 1";
-        
+        $query = "SELECT d.*, u.*, dep.department_name 
+              FROM " . $this->table_name . " d
+              INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
+              LEFT JOIN departments dep ON d.department_id = dep.department_id
+              WHERE d.doctor_id = :id LIMIT 1";
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -38,11 +39,12 @@ class DoctorRepository implements DoctorInterface
 
     public function findByUserId(int $userId): ?Doctor
     {
-        $query = "SELECT d.*, u.* 
-                  FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
-                  WHERE d.user_id = :userId LIMIT 1";
-        
+        $query = "SELECT d.*, u.*, dep.department_name 
+              FROM " . $this->table_name . " d
+              INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
+              LEFT JOIN departments dep ON d.department_id = dep.department_id
+              WHERE d.doctor_id = :userId LIMIT 1";
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
@@ -56,11 +58,12 @@ class DoctorRepository implements DoctorInterface
 
     public function findAll(): array
     {
-        $query = "SELECT d.*, u.* 
-                  FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
-                  ORDER BY d.last_name, d.first_name";
-        
+        $query = "SELECT d.*, u.*, dep.department_name 
+              FROM " . $this->table_name . " d
+              INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
+              LEFT JOIN departments dep ON d.department_id = dep.department_id
+              ORDER BY d.last_name, d.first_name";
+
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 
@@ -72,14 +75,15 @@ class DoctorRepository implements DoctorInterface
         return $doctors;
     }
 
+
     public function findByDepartment(int $departmentId): array
     {
         $query = "SELECT d.*, u.* 
                   FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
                   WHERE d.department_id = :departmentId
                   ORDER BY d.last_name, d.first_name";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':departmentId', $departmentId);
         $stmt->execute();
@@ -96,10 +100,10 @@ class DoctorRepository implements DoctorInterface
     {
         $query = "SELECT d.*, u.* 
                   FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
                   WHERE d.specialization = :specialization
                   ORDER BY d.last_name, d.first_name";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':specialization', $specialization);
         $stmt->execute();
@@ -114,20 +118,20 @@ class DoctorRepository implements DoctorInterface
 
     public function create(Doctor $doctor): bool
     {
-        $query = "INSERT INTO " . $this->table_name . " 
-                  (user_id, first_name, last_name, specialization, phone_number, department_id) 
-                  VALUES (:user_id, :first_name, :last_name, :specialization, :phone_number, :department_id)";
+        $query = "INSERT INTO doctors 
+      (doctor_id, first_name, last_name, specialization, phone_number, department_id) 
+      VALUES (:doctor_id, :first_name, :last_name, :specialization, :phone_number, :department_id)";
 
         $stmt = $this->conn->prepare($query);
 
-        $userId = $doctor->getId();
+        $doctorId = $doctor->getId();  
         $firstName = $doctor->getFirstName();
         $lastName = $doctor->getLastName();
         $specialization = $doctor->getSpecialization();
         $phoneNumber = $doctor->getPhoneNumber();
         $departmentId = $doctor->getDepartmentId();
 
-        $stmt->bindParam(':user_id', $userId);
+        $stmt->bindParam(':doctor_id', $doctorId);
         $stmt->bindParam(':first_name', $firstName);
         $stmt->bindParam(':last_name', $lastName);
         $stmt->bindParam(':specialization', $specialization);
@@ -135,7 +139,7 @@ class DoctorRepository implements DoctorInterface
         $stmt->bindParam(':department_id', $departmentId);
 
         if ($stmt->execute()) {
-            $doctor->setDoctorId((int)$this->conn->lastInsertId());
+            $doctor->setDoctorId($doctorId);
             return true;
         }
 
@@ -184,10 +188,10 @@ class DoctorRepository implements DoctorInterface
     {
         $query = "SELECT d.*, u.username, u.email, u.role, u.created_at, dep.department_name, dep.location
                   FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
                   LEFT JOIN departments dep ON d.department_id = dep.department_id
                   WHERE d.doctor_id = :doctorId LIMIT 1";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':doctorId', $doctorId);
         $stmt->execute();
@@ -199,10 +203,10 @@ class DoctorRepository implements DoctorInterface
     {
         $query = "SELECT d.*, u.* 
                   FROM " . $this->table_name . " d
-                  INNER JOIN " . $this->users_table . " u ON d.user_id = u.id
+                  INNER JOIN " . $this->users_table . " u ON d.doctor_id = u.id
                   WHERE CONCAT(d.first_name, ' ', d.last_name) LIKE :name
                   ORDER BY d.last_name, d.first_name";
-        
+
         $stmt = $this->conn->prepare($query);
         $searchTerm = '%' . $name . '%';
         $stmt->bindParam(':name', $searchTerm);
@@ -218,8 +222,8 @@ class DoctorRepository implements DoctorInterface
 
     private function mapToEntity(array $row): Doctor
     {
-        $doctor = new Doctor($this->conn);
-        
+        $doctor = new Doctor();
+
         // User fields
         if (isset($row['id'])) {
             $doctor->setId((int)$row['id']);
@@ -243,7 +247,7 @@ class DoctorRepository implements DoctorInterface
         $doctor->setLastName($row['last_name']);
         $doctor->setSpecialization($row['specialization']);
         $doctor->setPhoneNumber($row['phone_number']);
-        
+
         if (!empty($row['department_id'])) {
             $doctor->setDepartmentId((int)$row['department_id']);
         }

@@ -9,25 +9,13 @@ class Patient extends User
     private ?int $patient_id = null;
     private string $first_name;
     private string $last_name;
-    private string $gender;
     private string $date_of_birth;
     private string $phone_number;
     private string $address;
     private ?int $doctor_id = null;
 
-    public const GENDER_MALE = 'Male';
-    public const GENDER_FEMALE = 'Female';
-    public const GENDER_OTHER = 'Other';
-
-    private const ALLOWED_GENDERS = [
-        self::GENDER_MALE,
-        self::GENDER_FEMALE,
-        self::GENDER_OTHER
-    ];
-
     public function __construct()
     {
-        parent::__construct();
         $this->role = self::ROLE_PATIENT;
     }
 
@@ -44,11 +32,6 @@ class Patient extends User
     public function getLastName(): string
     {
         return $this->last_name;
-    }
-
-    public function getGender(): string
-    {
-        return $this->gender;
     }
 
     public function getDateOfBirth(): string
@@ -93,14 +76,6 @@ class Patient extends User
             throw new InvalidArgumentException("Le nom est obligatoire.");
         }
         $this->last_name = trim($last_name);
-    }
-
-    public function setGender(string $gender): void
-    {
-        if (!in_array($gender, self::ALLOWED_GENDERS)) {
-            throw new InvalidArgumentException("Genre invalide.");
-        }
-        $this->gender = $gender;
     }
 
     public function setDateOfBirth(string $date_of_birth): void
@@ -156,12 +131,11 @@ class Patient extends User
     public function __toString(): string
     {
         return sprintf(
-            "Patient #%d | Name: %s %s | Email: %s | Gender: %s | DOB: %s | Doctor ID: %s",
+            "Patient #%d | Name: %s %s | Email: %s  | DOB: %s | Doctor ID: %s",
             $this->patient_id ?? 0,
             $this->first_name ?? 'N/A',
             $this->last_name ?? 'N/A',
             $this->email ?? 'N/A',
-            $this->gender ?? 'N/A',
             $this->date_of_birth ?? 'N/A',
             $this->doctor_id ?? 'N/A'
         );

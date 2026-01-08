@@ -12,6 +12,30 @@ class Appointment
     private int $doctor_id;
     private int $patient_id;
     private string $reason;
+    private string $status = 'Pending';
+    private ?string $notes = null;
+    private ?string $patient_name = null;
+    private ?string $doctor_name = null;
+
+    public function getPatientName(): ?string
+    {
+        return $this->patient_name;
+    }
+    
+    public function setPatientName(string $name): void
+    {
+        $this->patient_name = $name;
+    }
+
+    public function getDoctorName(): ?string
+    {
+        return $this->doctor_name;
+    }
+    
+    public function setDoctorName(string $name): void
+    {
+        $this->doctor_name = $name;
+    }
 
     public function getAppointmentId(): ?int
     {
@@ -41,6 +65,16 @@ class Appointment
     public function getReason(): string
     {
         return $this->reason;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
     }
 
     public function setAppointmentId(int $appointment_id): void
@@ -91,6 +125,20 @@ class Appointment
         $this->reason = trim($reason);
     }
 
+    public function setStatus(string $status): void
+    {
+        $validStatuses = ['Pending', 'Confirmed', 'Completed', 'Cancelled'];
+        if (!in_array($status, $validStatuses)) {
+            throw new InvalidArgumentException("Statut invalide.");
+        }
+        $this->status = $status;
+    }
+
+    public function setNotes(?string $notes): void
+    {
+        $this->notes = $notes ? trim($notes) : null;
+    }
+
     private function isValidDate(string $date): bool
     {
         $d = \DateTime::createFromFormat('Y-m-d', $date);
@@ -100,7 +148,10 @@ class Appointment
     private function isValidTime(string $time): bool
     {
         $t = \DateTime::createFromFormat('H:i:s', $time);
-        return $t && $t->format('H:i:s') === $time;
+        if (!$t) {
+            $t = \DateTime::createFromFormat('H:i', $time);
+        }
+        return $t !== false;
     }
 
     public function getDateTime(): \DateTime
@@ -121,12 +172,13 @@ class Appointment
     public function __toString(): string
     {
         return sprintf(
-            "Appointment #%d | Date: %s %s | Doctor: %d | Patient: %d | Reason: %s",
+            "Appointment #%d | Date: %s %s | Doctor: %d | Patient: %d | Status: %s | Reason: %s",
             $this->appointment_id ?? 0,
             $this->appointment_date ?? 'N/A',
             $this->appointment_time ?? 'N/A',
             $this->doctor_id ?? 0,
             $this->patient_id ?? 0,
+            $this->status ?? 'N/A',
             $this->reason ?? 'N/A'
         );
     }

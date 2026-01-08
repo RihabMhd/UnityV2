@@ -13,8 +13,6 @@ interface PatientInterface
 
     public function findByDoctor(int $doctorId): array;
 
-    public function findByGender(string $gender): array;
-
     public function create(Patient $patient): bool;
 
     public function update(Patient $patient): bool;

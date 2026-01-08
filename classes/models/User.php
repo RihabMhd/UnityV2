@@ -1,36 +1,74 @@
 <?php
-
 namespace Models;
 
-use InvalidArgumentException;
+/**
+ * IMPORTANT: Make sure your User model includes these methods for password handling
+ */
 
 class User
 {
+    const ROLE_ADMIN = 'admin';
+    const ROLE_DOCTOR = 'doctor';
+    const ROLE_PATIENT = 'patient';
+
     protected ?int $id = null;
     protected string $username;
     protected string $email;
-    protected string $password;
+    protected string $password; // This should store HASHED password
     protected string $role;
-    protected string $created_at;
+    protected ?string $created_at = null;
 
-    public const ROLE_ADMIN = 'admin';
-    public const ROLE_DOCTOR = 'doctor';
-    public const ROLE_PATIENT = 'patient';
+    // NO CONSTRUCTOR NEEDED - PHP will initialize properties
+    // Child classes (like Patient) can set their own defaults
 
-    private const ALLOWED_ROLES = [
-        self::ROLE_ADMIN,
-        self::ROLE_DOCTOR,
-        self::ROLE_PATIENT
-    ];
+    // ... other methods ...
 
-    public function __construct()
+    /**
+     * Set password - automatically hashes it
+     */
+    public function setPassword(string $password): void
     {
-        $this->created_at = date('Y-m-d H:i:s');
+        if (empty(trim($password))) {
+            throw new \InvalidArgumentException("Password cannot be empty");
+        }
+        
+        // Hash the password using PHP's password_hash function
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
+    /**
+     * Set already-hashed password (for loading from database)
+     */
+    public function setPasswordRaw(string $hashedPassword): void
+    {
+        $this->password = $hashedPassword;
+    }
+
+    /**
+     * Get the hashed password
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * Verify a plain text password against the hashed password
+     */
+    public function verifyPassword(string $plainPassword): bool
+    {
+        return password_verify($plainPassword, $this->password);
+    }
+
+    // Getters and setters for other properties
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getUsername(): string
@@ -38,14 +76,25 @@ class User
         return $this->username;
     }
 
+    public function setUsername(string $username): void
+    {
+        if (empty(trim($username))) {
+            throw new \InvalidArgumentException("Username cannot be empty");
+        }
+        $this->username = trim($username);
+    }
+
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getPassword(): string
+    public function setEmail(string $email): void
     {
-        return $this->password;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException("Invalid email format");
+        }
+        $this->email = trim($email);
     }
 
     public function getRole(): string
@@ -53,98 +102,22 @@ class User
         return $this->role;
     }
 
-    public function getCreatedAt(): string
-    {
-        return $this->created_at;
-    }
-
-    public function setId(int $id): void
-    {
-        if ($id <= 0) {
-            throw new InvalidArgumentException("ID invalide.");
-        }
-        $this->id = $id;
-    }
-
-    public function setUsername(string $username): void
-    {
-        if (empty(trim($username))) {
-            throw new InvalidArgumentException("Le nom d'utilisateur est obligatoire.");
-        }
-        if (strlen($username) > 50) {
-            throw new InvalidArgumentException("Le nom d'utilisateur ne doit pas dépasser 50 caractères.");
-        }
-        $this->username = trim($username);
-    }
-
-    public function setEmail(string $email): void
-    {
-        if (empty(trim($email))) {
-            throw new InvalidArgumentException("L'email est obligatoire.");
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException("Format d'email invalide.");
-        }
-        $this->email = trim($email);
-    }
-
-    public function setPassword(string $password): void
-    {
-        if (empty($password)) {
-            throw new InvalidArgumentException("Le mot de passe est obligatoire.");
-        }
-        if (strlen($password) < 6) {
-            throw new InvalidArgumentException("Le mot de passe doit contenir au moins 6 caractères.");
-        }
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
-    }
-
-    public function setPasswordRaw(string $password): void
-    {
-        $this->password = $password;
-    }
-
     public function setRole(string $role): void
     {
-        if (!in_array($role, self::ALLOWED_ROLES)) {
-            throw new InvalidArgumentException("Rôle invalide.");
+        $validRoles = [self::ROLE_ADMIN, self::ROLE_DOCTOR, self::ROLE_PATIENT];
+        if (!in_array($role, $validRoles)) {
+            throw new \InvalidArgumentException("Invalid role");
         }
         $this->role = $role;
+    }
+
+    public function getCreatedAt(): ?string
+    {
+        return $this->created_at;
     }
 
     public function setCreatedAt(string $created_at): void
     {
         $this->created_at = $created_at;
-    }
-
-    public function verifyPassword(string $password): bool
-    {
-        return password_verify($password, $this->password);
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === self::ROLE_ADMIN;
-    }
-
-    public function isDoctor(): bool
-    {
-        return $this->role === self::ROLE_DOCTOR;
-    }
-
-    public function isPatient(): bool
-    {
-        return $this->role === self::ROLE_PATIENT;
-    }
-
-    public function __toString(): string
-    {
-        return sprintf(
-            "User #%d | Username: %s | Email: %s | Role: %s",
-            $this->id ?? 0,
-            $this->username ?? 'N/A',
-            $this->email ?? 'N/A',
-            $this->role ?? 'N/A'
-        );
     }
 }
