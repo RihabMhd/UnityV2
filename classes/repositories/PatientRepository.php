@@ -95,14 +95,13 @@ class PatientRepository implements PatientInterface
  
     public function create(Patient $patient): bool
     {
-        // Check if doctor_id column exists in the table
         $query = "INSERT INTO " . $this->table_name . " 
                   (patient_id, first_name, last_name, date_of_birth, phone_number, address) 
                   VALUES (:patient_id, :first_name, :last_name, :date_of_birth, :phone_number, :address)";
 
         $stmt = $this->conn->prepare($query);
 
-        $patientId = $patient->getId(); // patient_id = user_id
+        $patientId = $patient->getId(); 
         $firstName = $patient->getFirstName();
         $lastName = $patient->getLastName();
         $dateOfBirth = $patient->getDateOfBirth();

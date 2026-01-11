@@ -38,7 +38,7 @@ class Router {
         exit();
     }
     
-    // navigate to specific file in user's role folder
+    
     public function navigateTo($file) {
         if (!$this->isAuthenticated()) {
             $this->redirectToLogin();
@@ -51,17 +51,13 @@ class Router {
         exit();
     }
     
-    // New method: Navigate to specific file in any role folder (with permission check)
     public function navigateToRole($role, $file) {
         if (!$this->isAuthenticated()) {
             $this->redirectToLogin();
         }
         
-        // Optional: Add role permission check here
-        // For example, only admins can navigate to other roles' pages
         $currentRole = $this->getRole();
         if ($currentRole !== 'admin' && $currentRole !== $role) {
-            // Redirect to their own dashboard if they don't have permission
             $this->redirectToDashboard();
         }
         

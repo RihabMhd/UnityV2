@@ -58,6 +58,12 @@ $current_username = $_SESSION['username'] ?? 'User';
                 </a>
             </li>
             <li>
+                <a href="<?php echo $router->url('doctor', 'patients.php'); ?>" class="<?php echo $current_page === 'patients.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-procedures"></i>
+                    <span>Patients</span>
+                </a>
+            </li>
+            <li>
                 <a href="<?php echo $router->url('doctor', 'appointments.php'); ?>" class="<?php echo $current_page === 'appointments.php' ? 'active' : ''; ?>">
                     <i class="fas fa-calendar-check"></i>
                     <span>My Appointments</span>

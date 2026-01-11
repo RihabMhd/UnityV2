@@ -246,7 +246,7 @@ class PrescriptionRepository implements PrescriptionInterface
 
     private function mapToEntity(array $row): Prescription
     {
-        $prescription = new Prescription($this->conn);
+        $prescription = new Prescription(); // Removed $this->conn parameter
         $prescription->setPrescriptionId((int)$row['prescription_id']);
         $prescription->setPatientId((int)$row['patient_id']);
         $prescription->setDoctorId((int)$row['doctor_id']);

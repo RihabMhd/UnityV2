@@ -1,9 +1,6 @@
 <?php
 namespace Models;
 
-/**
- * IMPORTANT: Make sure your User model includes these methods for password handling
- */
 
 class User
 {
@@ -14,53 +11,38 @@ class User
     protected ?int $id = null;
     protected string $username;
     protected string $email;
-    protected string $password; // This should store HASHED password
+    protected string $password; 
     protected string $role;
     protected ?string $created_at = null;
 
-    // NO CONSTRUCTOR NEEDED - PHP will initialize properties
-    // Child classes (like Patient) can set their own defaults
-
-    // ... other methods ...
-
-    /**
-     * Set password - automatically hashes it
-     */
+    
     public function setPassword(string $password): void
     {
         if (empty(trim($password))) {
             throw new \InvalidArgumentException("Password cannot be empty");
         }
         
-        // Hash the password using PHP's password_hash function
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    /**
-     * Set already-hashed password (for loading from database)
-     */
+   
     public function setPasswordRaw(string $hashedPassword): void
     {
         $this->password = $hashedPassword;
     }
 
-    /**
-     * Get the hashed password
-     */
+   
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * Verify a plain text password against the hashed password
-     */
+   
     public function verifyPassword(string $plainPassword): bool
     {
         return password_verify($plainPassword, $this->password);
     }
 
-    // Getters and setters for other properties
     public function getId(): ?int
     {
         return $this->id;
