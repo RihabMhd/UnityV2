@@ -1,7 +1,6 @@
 <?php
-
 $current_page = basename($_SERVER['PHP_SELF']);
-$current_role = $router->getRole();
+$current_role = strtolower($router->getRole()); // Convert to lowercase for consistency
 $current_username = $_SESSION['username'] ?? 'User';
 ?>
 

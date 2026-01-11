@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Only start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 class Router {
     private $basePath = '/UnityV2';
@@ -22,7 +25,10 @@ class Router {
             $this->redirectToLogin();
         }
         
-        switch ($this->getRole()) {
+        // Convert role to lowercase for case-insensitive comparison
+        $role = strtolower($this->getRole());
+        
+        switch ($role) {
             case 'admin':
                 header("Location: {$this->basePath}/public/admin/index.php");
                 break;
@@ -33,18 +39,19 @@ class Router {
                 header("Location: {$this->basePath}/public/patient/index.php");
                 break;
             default:
+                // Log the invalid role for debugging
+                error_log("Invalid role attempted: " . ($this->getRole() ?? 'NULL'));
                 $this->logout();
         }
         exit();
     }
-    
     
     public function navigateTo($file) {
         if (!$this->isAuthenticated()) {
             $this->redirectToLogin();
         }
         
-        $role = $this->getRole();
+        $role = strtolower($this->getRole());
         $targetPath = $this->basePath . '/public/' . $role . '/' . ltrim($file, '/');
         
         header("Location: {$targetPath}");
@@ -56,12 +63,14 @@ class Router {
             $this->redirectToLogin();
         }
         
-        $currentRole = $this->getRole();
-        if ($currentRole !== 'admin' && $currentRole !== $role) {
+        $currentRole = strtolower($this->getRole());
+        $targetRole = strtolower($role);
+        
+        if ($currentRole !== 'admin' && $currentRole !== $targetRole) {
             $this->redirectToDashboard();
         }
         
-        $targetPath = $this->basePath . '/public/' . $role . '/' . ltrim($file, '/');
+        $targetPath = $this->basePath . '/public/' . $targetRole . '/' . ltrim($file, '/');
         
         header("Location: {$targetPath}");
         exit();
@@ -76,7 +85,11 @@ class Router {
             $allowedRoles = [$allowedRoles];
         }
         
-        if (!in_array($this->getRole(), $allowedRoles)) {
+        // Case-insensitive role comparison
+        $currentRole = strtolower($this->getRole());
+        $allowedRoles = array_map('strtolower', $allowedRoles);
+        
+        if (!in_array($currentRole, $allowedRoles)) {
             $this->redirectToDashboard();
         }
     }
@@ -96,6 +109,7 @@ class Router {
     
     // Enhanced URL method - now accepts specific files
     public function url($role, $page = 'index.php') {
+        $role = strtolower($role);
         return $this->basePath . '/public/' . $role . '/' . ltrim($page, '/');
     }
     
@@ -111,4 +125,3 @@ class Router {
 }
 
 $router = new Router();
-?>

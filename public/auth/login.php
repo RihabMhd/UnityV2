@@ -1,20 +1,26 @@
 <?php
 session_start();
 
+// If already logged in, redirect manually
 if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
-    require_once __DIR__ . '/../../router.php';
-    $router->redirectToDashboard();
+    $role = strtolower($_SESSION['role']);
+    $redirectPath = match($role) {
+        'admin' => '/UnityV2/public/admin/index.php',
+        'doctor' => '/UnityV2/public/doctor/index.php',
+        'patient' => '/UnityV2/public/patient/index.php',
+        default => '/UnityV2/public/auth/login.php'
+    };
+    header("Location: $redirectPath");
+    exit();
 }
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-
 
 use Repositories\UserRepository;
 use Config\Database;
 
 $error = '';
 $success = '';
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -31,19 +37,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $userRepo->findByUsername($username);
             
             if ($user && password_verify($password, $user->getPassword())) {
+                // Set session variables
                 $_SESSION['user_id'] = $user->getId();
                 $_SESSION['username'] = $user->getUsername();
                 $_SESSION['email'] = $user->getEmail();
                 $_SESSION['role'] = $user->getRole();
                 
-                require_once '../../router.php';
-                $router->redirectToDashboard();
+                // Force write session
+                session_write_close();
+                
+                // Manual redirect based on role
+                $role = strtolower($user->getRole());
+                $redirectPath = match($role) {
+                    'admin' => '/UnityV2/public/admin/index.php',
+                    'doctor' => '/UnityV2/public/doctor/index.php',
+                    'patient' => '/UnityV2/public/patient/index.php',
+                    default => '/UnityV2/public/auth/login.php'
+                };
+                
+                header("Location: $redirectPath");
+                exit();
             } else {
                 $error = 'Invalid username or password.';
             }
         } catch (Exception $e) {
             $error = 'An error occurred. Please try again.';
-            error_log($e->getMessage());
+            error_log("Login error: " . $e->getMessage());
         }
     }
 }
@@ -323,10 +342,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .forgot-password a:hover::after {
             width: 100%;
-        }
-
-        .input-group-icon {
-            position: relative;
         }
 
         .mb-3 {

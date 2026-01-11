@@ -28,4 +28,3 @@ switch ($_SESSION['role']) {
         break;
 }
 exit();
-?>
